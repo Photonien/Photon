@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "cecab0cb-94d2-47b2-8e74-e3e55c61fdb3",
+		"name": "ToDoApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "NewToDo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Deneme\",\n  \"description\": \"DenemeDesc\",\n  \"completed\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:6000/newtodo",
+					"host": [
+						"localhost"
+					],
+					"port": "6000",
+					"path": [
+						"newtodo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListToDo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:6000/listtodo",
+					"host": [
+						"localhost"
+					],
+					"port": "6000",
+					"path": [
+						"listtodo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NewLogin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"Dogukan\"\n}"
+				},
+				"url": {
+					"raw": "localhost:6000/newlogin",
+					"host": [
+						"localhost"
+					],
+					"port": "6000",
+					"path": [
+						"newlogin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListLogin",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:6000/listlogin",
+					"host": [
+						"localhost"
+					],
+					"port": "6000",
+					"path": [
+						"listlogin"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
