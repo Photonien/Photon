@@ -21,7 +21,7 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
-find_package(Qt5 COMPONENTS Widgets Core Test REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Test Network REQUIRED)
 
 set(CRESSIE_SCRIPT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Scripts")
 add_definitions( ${QT_DEFINITIONS} )
@@ -34,7 +34,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
 #add_subdirectory(Libraries)
 #add_subdirectory(Objects)
-#add_subdirectory(Applications)
+add_subdirectory(Client)
 
 enable_testing()
 
