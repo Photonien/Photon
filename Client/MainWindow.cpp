@@ -7,6 +7,7 @@
 #include <QMenuBar>
 
 #include "ContentList.h"
+#include "ContentView.h"
 
 using namespace Photon;
 
@@ -17,10 +18,13 @@ MainWindow::MainWindow(QWidget *parent)
     createActions();
     setupMenuBar();
     ContentList* contentList = new ContentList(this);
-    this->setCentralWidget(contentList);
-    m_ui->setupUi(this);
+    ContentView* contentView = new ContentView(this);
 
-    connect(m_ui->pushButton, SIGNAL(clicked()), this, SLOT(onPushButtonClicked()));
+    m_ui->setupUi(this);
+    m_ui->horizontalLayout->addWidget(contentList);
+    m_ui->horizontalLayout->addWidget(contentView);
+    m_ui->horizontalLayout->setStretchFactor(contentList, 1);
+    m_ui->horizontalLayout->setStretchFactor(contentView,4);
 }
 
 MainWindow::~MainWindow()
@@ -44,7 +48,7 @@ void MainWindow::onPushButtonClicked()
 
 void MainWindow::downloading(qint64 bytesReceived, qint64 bytesTotal) 
 {
-    m_ui->plainTextEdit->appendPlainText(QString("Downloading %1 of %2 bytes").arg(bytesReceived).arg(bytesTotal));
+    //m_ui->plainTextEdit->appendPlainText(QString("Downloading %1 of %2 bytes").arg(bytesReceived).arg(bytesTotal));
 }
 
 //And finally, my onResult slot
@@ -54,13 +58,13 @@ void MainWindow::onResult()
 
     if (reply->error() != QNetworkReply::NoError)
     {
-        m_ui->plainTextEdit->appendPlainText("Error :" + reply->errorString());
+        //m_ui->plainTextEdit->appendPlainText("Error :" + reply->errorString());
         return;
     }
 
     reply->deleteLater();
 
-    m_ui->plainTextEdit->appendPlainText("Response: " + reply->readAll());
+    //m_ui->plainTextEdit->appendPlainText("Response: " + reply->readAll());
 }
 
 void MainWindow::setupMenuBar()
