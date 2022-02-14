@@ -19,9 +19,25 @@ namespace Photon
         void onPushButtonClicked();
         void downloading(qint64, qint64);
         void onResult();
+        void showAbout();
+        void save();
+        void print();
+        void exportDoc();
+        void closeApp();
 
     private:
+        void createActions();
+        void setupMenuBar();
+
         Ui::MainWindow* m_ui;
+        
+        QAction* saveAction;
+        QAction* printAction;
+        QAction* exportAction;
+        QAction* exitAction;
+        QAction* aboutAction;
+        QAction* connectAction;
+        QAction* disconnectAction;
 
     };
 }
