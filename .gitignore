@@ -1,3 +1,6 @@
 .DS_Store
 .vscode
 Out
+.devcontainer
+Service/node_modules
+Service/package-lock.json
