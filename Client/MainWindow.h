@@ -24,6 +24,7 @@ namespace Photon
         void print();
         void exportDoc();
         void closeApp();
+        void connectToServer();
 
     private:
         void createActions();

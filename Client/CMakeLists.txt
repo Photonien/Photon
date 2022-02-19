@@ -13,6 +13,8 @@ execute_process(
 target_sources(
     Client 
     PRIVATE
+        LoginDialog.cpp
+        LoginDialog.h
         ContentView.cpp
         ContentView.h
         ContentList.h

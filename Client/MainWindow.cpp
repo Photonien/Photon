@@ -9,6 +9,7 @@
 
 #include "ContentList.h"
 #include "ContentView.h"
+#include "LoginDialog.h"
 
 using namespace Photon;
 
@@ -23,7 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_ui->setupUi(this);
     statusBar()->showMessage("Ready");
-
+    QTabWidget* tabWidget = new QTabWidget(this);
+    tabWidget->setTabsClosable(true);
+    tabWidget->setMovable(true);
+    tabWidget->addTab(contentView, "Content View");
     // Add connect action to toolbar
     m_ui->toolBar->addAction(saveAction);
     m_ui->toolBar->addAction(printAction);
@@ -33,9 +37,9 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->toolBar->addAction(aboutAction);
 
     m_ui->horizontalLayout->addWidget(contentList);
-    m_ui->horizontalLayout->addWidget(contentView);
+    m_ui->horizontalLayout->addWidget(tabWidget);
     m_ui->horizontalLayout->setStretchFactor(contentList, 1);
-    m_ui->horizontalLayout->setStretchFactor(contentView,4);
+    m_ui->horizontalLayout->setStretchFactor(tabWidget,4);
 }
 
 MainWindow::~MainWindow()
@@ -59,7 +63,7 @@ void MainWindow::onPushButtonClicked()
 
 void MainWindow::downloading(qint64 bytesReceived, qint64 bytesTotal) 
 {
-    //m_ui->plainTextEdit->appendPlainText(QString("Downloading %1 of %2 bytes").arg(bytesReceived).arg(bytesTotal));
+    m_ui->statusBar->showMessage(QString("Downloading %1 of %2").arg(bytesReceived).arg(bytesTotal));
 }
 
 //And finally, my onResult slot
@@ -69,13 +73,12 @@ void MainWindow::onResult()
 
     if (reply->error() != QNetworkReply::NoError)
     {
-        //m_ui->plainTextEdit->appendPlainText("Error :" + reply->errorString());
+        m_ui->statusBar->showMessage("Error :" + reply->errorString());
         return;
     }
 
     reply->deleteLater();
-
-    //m_ui->plainTextEdit->appendPlainText("Response: " + reply->readAll());
+    m_ui->statusBar->showMessage("Response :" + reply->readAll());
 }
 
 void MainWindow::setupMenuBar()
@@ -131,7 +134,7 @@ void MainWindow::createActions()
     connectAction->setShortcut(tr("Ctrl+C"));
     connectAction->setStatusTip(tr("Connect to the server"));
     connectAction->setIcon(this->style()->standardIcon(QStyle::SP_BrowserReload));
-    connect(connectAction, SIGNAL(triggered()), this, SLOT(onPushButtonClicked()));
+    connect(connectAction, SIGNAL(triggered()), this, SLOT(connectToServer()));
 
     disconnectAction = new QAction(tr("&Disconnect"), this);
     disconnectAction->setShortcut(tr("Ctrl+D"));
@@ -184,5 +187,11 @@ void MainWindow::print()
 void MainWindow::exportDoc()
 {
     QMessageBox::information(this, "Photon", "The document has been exported!");
+}
+
+void MainWindow::connectToServer()
+{  
+    LoginDialog* login = new LoginDialog();
+    login->show();
 }
 
