@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QTreeView>
+#include <QMenu>
+#include <QAction>
 
 namespace Photon
 {
@@ -14,6 +16,15 @@ namespace Photon
         ContentList(QWidget *parent);
 
         QTreeView* tree;
+    private slots:
+        void onCustomContextMenu(const QPoint &point);
+
+    private:
+        void createMenuActions();
+        QMenu* contextMenu;
+        QAction* openAction;
+        QAction* addAction;
+        QAction* deleteAction;
     };
 }
 

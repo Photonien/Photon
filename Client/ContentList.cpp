@@ -12,6 +12,9 @@ ContentList::ContentList(QWidget* parent)
     QLayout *lo = new QVBoxLayout(this);
     tree = new QTreeView(this);
 
+    contextMenu = new QMenu(this);
+    createMenuActions();
+
     // Experimental temporary code
     QStandardItemModel* model = new QStandardItemModel(this);
     // Create the root item.
@@ -38,9 +41,41 @@ ContentList::ContentList(QWidget* parent)
     tree->setAnimated(true);
     tree->setSelectionMode(QAbstractItemView::SingleSelection);
     tree->setSelectionBehavior(QAbstractItemView::SelectRows);
-
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    
+    connect(tree, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(onCustomContextMenu(const QPoint &)));
 
     setLayout(lo);
     lo->addWidget(tree);
     lo->setSpacing(5);
+}
+
+void ContentList::createMenuActions()
+{
+    openAction = new QAction(tr("&Open"), this);
+    openAction->setStatusTip(tr("Open this model"));
+    openAction->setIcon(this->style()->standardIcon(QStyle::SP_DirOpenIcon));
+    //connect(openAction, SIGNAL(triggered()), this, SLOT(//FillHere));
+    contextMenu->addAction(openAction);
+    
+    addAction = new QAction(tr("&Add"), this);
+    addAction->setStatusTip(tr("Add a new model"));
+    addAction->setIcon(this->style()->standardIcon(QStyle::SP_FileDialogNewFolder));
+    //connect(addAction, SIGNAL(triggered()), this, SLOT(//FillHere));
+    contextMenu->addAction(addAction);
+
+    deleteAction = new QAction(tr("&Delete"), this);
+    deleteAction->setStatusTip(tr("Delete this model"));
+    deleteAction->setIcon(this->style()->standardIcon(QStyle::SP_TrashIcon));
+    //connect(deleteAction, SIGNAL(triggered()), this, SLOT(//FillHere));
+    contextMenu->addAction(deleteAction);
+}
+
+void ContentList::onCustomContextMenu(const QPoint &point)
+{
+    QModelIndex index = tree->indexAt(point);
+    if (index.isValid() && index.parent().isValid())
+    {
+        contextMenu->exec(tree->viewport()->mapToGlobal(point));
+    }    
 }

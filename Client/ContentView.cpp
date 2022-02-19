@@ -15,7 +15,7 @@ ContentView::ContentView(QWidget* parent)
     table->setItem(0, 1, new QTableWidgetItem("Item2"));
     table->setItem(0, 2, new QTableWidgetItem("Item3"));
     table->setItem(0, 3, new QTableWidgetItem("Item4"));
-
+    
     setLayout(lo);
     lo->addWidget(table);
     lo->setSpacing(5);
