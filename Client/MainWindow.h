@@ -1,5 +1,7 @@
 #include <QMainWindow>
 
+#include <QTabWidget>
+
 namespace Ui
 {
     class MainWindow;
@@ -25,12 +27,16 @@ namespace Photon
         void exportDoc();
         void closeApp();
         void connectToServer();
+        void disconnectServer();
+        void tabClose(int index);
 
     private:
         void createActions();
         void setupMenuBar();
 
         Ui::MainWindow* m_ui;
+
+        QTabWidget* tabWidget;
         
         QAction* saveAction;
         QAction* printAction;

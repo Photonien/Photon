@@ -1,11 +1,13 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QMessageBox>
 #include <QAction>
 #include <QMenuBar>
 #include <QStatusBar>
+#include <QSplitter>
 
 #include "ContentList.h"
 #include "ContentView.h"
@@ -24,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_ui->setupUi(this);
     statusBar()->showMessage("Ready");
-    QTabWidget* tabWidget = new QTabWidget(this);
+    tabWidget = new QTabWidget(this);
     tabWidget->setTabsClosable(true);
     tabWidget->setMovable(true);
     tabWidget->addTab(contentView, "Content View");
@@ -36,10 +38,16 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->toolBar->addAction(disconnectAction);
     m_ui->toolBar->addAction(aboutAction);
 
-    m_ui->horizontalLayout->addWidget(contentList);
-    m_ui->horizontalLayout->addWidget(tabWidget);
-    m_ui->horizontalLayout->setStretchFactor(contentList, 1);
-    m_ui->horizontalLayout->setStretchFactor(tabWidget,4);
+    connect(tabWidget, SIGNAL(tabCloseRequested(int index)), this, SLOT(tabClose(int index)));
+
+    QSplitter* splitter = new QSplitter(this);
+    splitter->setOrientation(Qt::Horizontal);
+    splitter->setHandleWidth(1);
+    splitter->addWidget(contentList);
+    splitter->addWidget(tabWidget);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 4);
+    this->setCentralWidget(splitter);
 }
 
 MainWindow::~MainWindow()
@@ -140,7 +148,10 @@ void MainWindow::createActions()
     disconnectAction->setShortcut(tr("Ctrl+D"));
     disconnectAction->setStatusTip(tr("Disconnect from the server"));
     disconnectAction->setIcon(this->style()->standardIcon(QStyle::SP_BrowserStop));
-    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(onPushButtonClicked()));
+    connect(disconnectAction, SIGNAL(triggered()), this, SLOT(disconnectServer()));
+
+    disconnectAction->setEnabled(false);
+    connectAction->setEnabled(true);
 }
 
 const char *htmlText =
@@ -191,7 +202,22 @@ void MainWindow::exportDoc()
 
 void MainWindow::connectToServer()
 {  
+    disconnectAction->setEnabled(true);
+    connectAction->setEnabled(false);
+    
     LoginDialog* login = new LoginDialog();
     login->show();
 }
 
+void MainWindow::disconnectServer()
+{
+    disconnectAction->setEnabled(false);
+    connectAction->setEnabled(true);
+    
+    QMessageBox::information(this, "Photon", "The server has been disconnected!");
+}
+
+void MainWindow::tabClose(int index)
+{
+    tabWidget->widget(index)->close();
+}

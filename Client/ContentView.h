@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QTableWidget>
+#include <QMenu>
+#include <QAction>
 
 namespace Photon
 {
@@ -13,7 +15,20 @@ namespace Photon
     public:
         ContentView(QWidget *parent);
     private:
+        void createActions();
         QTableWidget* table;
+        QMenu* contentViewMenu;
+        QAction* insertRowUpAction;
+        QAction* insertRowDownAction;
+        QAction* insertColumnToLeftAction;
+        QAction* insertColumnToRightAction;
+        QAction* deleteRowAction;
+        QAction* deleteColumnAction;
+        QAction* moveUpAction;
+        QAction* moveDownAction;
+    private slots:
+        void onCustomContextMenu(const QPoint &point);
+        void headerDoubleClicked(int logicaIndex);
     };
 }
 
