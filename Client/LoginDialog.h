@@ -11,6 +11,9 @@ namespace Photon
 
     public:
         LoginDialog(QDialog *parent = 0);
+    private slots:
+        void connectToServer();
+        void cancel();
     private:
         QDialog* dialog;
     };

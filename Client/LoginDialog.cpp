@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QObject>
 #include <QStyle>
 
 using namespace Photon;
@@ -39,12 +40,22 @@ LoginDialog::LoginDialog(QDialog *parent)
     connectButton->setText("Connect");
     connectButton->setIcon(this->style()->standardIcon(QStyle::SP_CommandLink));
     layout->addWidget(connectButton, 3, 0);
-    // Connect the button to the slot
+    connect(connectButton, SIGNAL(clicked()), this, SLOT(connectToServer()));
 
     QPushButton *cancelButton = new QPushButton(dialog);
     cancelButton->setText("Cancel");
     cancelButton->setIcon(this->style()->standardIcon(QStyle::SP_DialogCancelButton));
     layout->addWidget(cancelButton, 3, 1);
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(QDialog::done(0)));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
     this->setLayout(layout);
+}
+
+void LoginDialog::connectToServer()
+{
+    // Do some stuff here!
+}
+
+void LoginDialog::cancel()
+{
+    this->reject();
 }
