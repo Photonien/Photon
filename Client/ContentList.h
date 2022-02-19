@@ -2,6 +2,7 @@
 #define INCLUDED_CONTENTLIST_H
 
 #include <QWidget>
+#include <QTreeView>
 
 namespace Photon
 {
@@ -11,6 +12,8 @@ namespace Photon
 
     public:
         ContentList(QWidget *parent);
+
+        QTreeView* tree;
     };
 }
 

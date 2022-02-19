@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QAction>
 #include <QMenuBar>
+#include <QStatusBar>
 
 #include "ContentList.h"
 #include "ContentView.h"
@@ -21,6 +22,16 @@ MainWindow::MainWindow(QWidget *parent)
     ContentView* contentView = new ContentView(this);
 
     m_ui->setupUi(this);
+    statusBar()->showMessage("Ready");
+
+    // Add connect action to toolbar
+    m_ui->toolBar->addAction(saveAction);
+    m_ui->toolBar->addAction(printAction);
+    m_ui->toolBar->addAction(exportAction);
+    m_ui->toolBar->addAction(connectAction);
+    m_ui->toolBar->addAction(disconnectAction);
+    m_ui->toolBar->addAction(aboutAction);
+
     m_ui->horizontalLayout->addWidget(contentList);
     m_ui->horizontalLayout->addWidget(contentView);
     m_ui->horizontalLayout->setStretchFactor(contentList, 1);
@@ -90,11 +101,13 @@ void MainWindow::createActions()
     aboutAction = new QAction(tr("&About"), this);
     aboutAction->setShortcut(tr("Ctrl+A"));
     aboutAction->setStatusTip(tr("Show the application's About box"));
+    aboutAction->setIcon(this->style()->standardIcon(QStyle::SP_MessageBoxInformation));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(showAbout()));
 
     saveAction = new QAction(tr("&Save"), this);
     saveAction->setShortcut(tr("Ctrl+S"));
     saveAction->setStatusTip(tr("Save the document to disk"));
+    saveAction->setIcon(this->style()->standardIcon(QStyle::SP_DriveFDIcon));
     connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
     printAction = new QAction(tr("&Print"), this);
@@ -105,21 +118,25 @@ void MainWindow::createActions()
     exportAction = new QAction(tr("&Export"), this);
     exportAction->setShortcut(tr("Ctrl+E"));
     exportAction->setStatusTip(tr("Export the document"));
+    exportAction->setIcon(this->style()->standardIcon(QStyle::SP_ArrowRight));
     connect(exportAction, SIGNAL(triggered()), this, SLOT(exportDoc()));
 
     exitAction = new QAction(tr("&Exit"), this);
     exitAction->setShortcut(tr("Ctrl+Q"));
     exitAction->setStatusTip(tr("Exit the application"));
+    exitAction->setIcon(this->style()->standardIcon(QStyle::SP_DockWidgetCloseButton));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApp()));
 
     connectAction = new QAction(tr("&Connect"), this);
     connectAction->setShortcut(tr("Ctrl+C"));
     connectAction->setStatusTip(tr("Connect to the server"));
+    connectAction->setIcon(this->style()->standardIcon(QStyle::SP_BrowserReload));
     connect(connectAction, SIGNAL(triggered()), this, SLOT(onPushButtonClicked()));
 
     disconnectAction = new QAction(tr("&Disconnect"), this);
     disconnectAction->setShortcut(tr("Ctrl+D"));
     disconnectAction->setStatusTip(tr("Disconnect from the server"));
+    disconnectAction->setIcon(this->style()->standardIcon(QStyle::SP_BrowserStop));
     connect(disconnectAction, SIGNAL(triggered()), this, SLOT(onPushButtonClicked()));
 }
 
