@@ -8,7 +8,8 @@ const sessions = require('express-session');
 
 // Models
 
-const UserModel = require("./UserModel");
+const UserModel = require("./ModelUser");
+const ItemModel = require("./ModelItem");
 
 // Globals
 
@@ -43,7 +44,7 @@ expressApp.get('/', function (req, res) {
 
 // Authentication Process
 
-expressApp.post("/register", (req, res) => {
+expressApp.post("/users/new", (req, res) => {
     var username = req.body.Username;
     var password = req.body.Password;
     var passwordEncrypted = crypto.MD5(password);
@@ -84,7 +85,7 @@ expressApp.post("/register", (req, res) => {
 
 });
 
-expressApp.post("/login", (req, res) => {
+expressApp.post("/auth/login", (req, res) => {
     var username = req.body.Username;
     var password = req.body.Password;
     var passwordEncrypted = crypto.MD5(password);
@@ -119,7 +120,7 @@ expressApp.post("/login", (req, res) => {
     } 
 });
 
-expressApp.get("/deleteUsers", (req, res) => {
+expressApp.get("/users/delete/all", (req, res) => {
     UserModel.remove({}, (result) =>
     {
         req.session.destroy();
@@ -127,7 +128,7 @@ expressApp.get("/deleteUsers", (req, res) => {
     });
 });
 
-expressApp.get("/listUsers", (req, res) => {
+expressApp.get("/users", (req, res) => {
     UserModel.find({})
         .then((result) => {
             res.status(200).json(result)
@@ -137,9 +138,42 @@ expressApp.get("/listUsers", (req, res) => {
         });
 });
 
-expressApp.get("/logout", (req, res) => {
+expressApp.get("/auth/logout", (req, res) => {
     req.session.destroy();
     res.status(200).json({ Message: "Log out is successfull"});
+});
+
+expressApp.post("/items/new", (req, res) => {
+    var author = req.body.Author;
+    var content = req.body.Content;
+
+    console.log("New item with " + author + ", " + content);
+
+    const newItemModel = new ItemModel({
+        Author: author,
+        Id: "123",
+        Content: content
+    });
+
+    newItemModel
+        .save()
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((err) => {
+            res.status(400).json(err)
+        });
+
+});
+
+expressApp.get("/items", (req, res) => {
+    ItemModel.find({})
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((err) => {
+            res.status(500).json(err)
+        });
 });
 
 expressApp.listen(expressPort, async () => {
