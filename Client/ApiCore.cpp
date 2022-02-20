@@ -7,8 +7,6 @@ constexpr auto API_URL = "http://localhost:6000/";
 ApiCore::ApiCore(QObject* parent) : QObject(parent)
 {
     m_networkAccessManager = new QNetworkAccessManager(this);
-    m_request = new QNetworkRequest(QUrl(API_URL));
-    m_reply = nullptr;
 }
 
 ApiCore::~ApiCore()
@@ -16,7 +14,7 @@ ApiCore::~ApiCore()
 
 }
 
-void ApiCore::post(const QJsonObject& json, QNetworkReply* reply, QUrl relativeUrl)
+void ApiCore::post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* reply)
 {
     QNetworkRequest request;
     QUrl baseUrl(API_URL);
@@ -25,7 +23,11 @@ void ApiCore::post(const QJsonObject& json, QNetworkReply* reply, QUrl relativeU
     reply = m_networkAccessManager->post(request, QJsonDocument(json).toJson());
 }
 
-void ApiCore::get(const QNetworkRequest* request, QNetworkReply* reply)
+void ApiCore::get(QUrl relativeUrl, QNetworkReply* reply)
 {
-    reply = m_networkAccessManager->get(*request);
+    QNetworkRequest request;
+    QUrl baseUrl(API_URL);
+    request.setUrl(baseUrl.resolved(relativeUrl));
+
+    reply = m_networkAccessManager->get(request);
 }
