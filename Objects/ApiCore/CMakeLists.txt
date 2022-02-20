@@ -14,6 +14,7 @@ target_sources(
     ApiCore
     PRIVATE
         ApiCore.cpp
+        ApiCore/ApiCore.h
 )
 
 target_include_directories(
