@@ -18,7 +18,7 @@ namespace Photon
 
         void post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* reply);
         void get(QUrl relativeUrl, QNetworkReply* reply);
-        
+        void login(QString username, QString password);
     private:
         QNetworkAccessManager* m_networkAccessManager;
         QNetworkReply* m_reply;

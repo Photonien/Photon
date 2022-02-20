@@ -31,3 +31,23 @@ void ApiCore::get(QUrl relativeUrl, QNetworkReply* reply)
 
     reply = m_networkAccessManager->get(request);
 }
+
+void ApiCore::login(QString username, QString password)
+{
+    QJsonObject json;
+    json["username"] = username;
+    json["password"] = password;
+    QNetworkReply *reply = nullptr;
+    post(json, QUrl("login"), reply);
+    // Check reply
+    if (reply->error() == QNetworkReply::NoError) 
+    {
+        QByteArray bytes = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+        QJsonObject jsonObject = jsonDoc.object();
+        if (jsonObject["status"].toString() == "success") 
+        {
+            // Login successful
+        }
+    }
+}
