@@ -4,17 +4,16 @@ using namespace Photon;
 
 constexpr auto API_URL = "http://localhost:6000/";
 
-ApiCore::ApiCore(QObject* parent) : QObject(parent)
+ApiCore::ApiCore(QObject *parent) : QObject(parent)
 {
     m_networkAccessManager = new QNetworkAccessManager(this);
 }
 
 ApiCore::~ApiCore()
 {
-
 }
 
-void ApiCore::post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* reply)
+void ApiCore::post(const QJsonObject &json, QUrl relativeUrl, QNetworkReply *reply)
 {
     QNetworkRequest request;
     QUrl baseUrl(API_URL);
@@ -23,7 +22,7 @@ void ApiCore::post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* rep
     reply = m_networkAccessManager->post(request, QJsonDocument(json).toJson());
 }
 
-void ApiCore::get(QUrl relativeUrl, QNetworkReply* reply)
+void ApiCore::get(QUrl relativeUrl, QNetworkReply *reply)
 {
     QNetworkRequest request;
     QUrl baseUrl(API_URL);
@@ -40,14 +39,109 @@ void ApiCore::login(QString username, QString password)
     QNetworkReply *reply = nullptr;
     post(json, QUrl("login"), reply);
     // Check reply
-    if (reply->error() == QNetworkReply::NoError) 
+    try
+    {
+        if (reply->error() == QNetworkReply::NoError)
+        {
+            QByteArray bytes = reply->readAll();
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+            QJsonObject jsonObject = jsonDoc.object();
+            if (jsonObject["status"].toString() == "success")
+            {
+                // Login successful
+            }
+        }
+    }
+    catch (const std::exception &e)
+    {
+        qDebug() << e.what();
+    }
+}
+
+void ApiCore::logout()
+{
+    QNetworkReply *reply = nullptr;
+    get(QUrl("logout"), reply);
+    // Check reply
+    if (reply->error() == QNetworkReply::NoError)
     {
         QByteArray bytes = reply->readAll();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
         QJsonObject jsonObject = jsonDoc.object();
-        if (jsonObject["status"].toString() == "success") 
+        if (jsonObject["status"].toString() == "success")
         {
-            // Login successful
+            // Logout successful
+        }
+    }
+}
+
+void ApiCore::addNewUser(QString user, QString password)
+{
+    QJsonObject json;
+    json["user"] = user;
+    json["password"] = password;
+    QNetworkReply *reply = nullptr;
+    post(json, QUrl("register"), reply);
+    // Check reply
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+        QJsonObject jsonObject = jsonDoc.object();
+        if (jsonObject["status"].toString() == "success")
+        {
+            // Add user successful
+        }
+    }
+}
+
+void ApiCore::listAllUsers()
+{
+    QNetworkReply *reply = nullptr;
+    get(QUrl("/listUsers"), reply);
+    // Check reply
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+        QJsonObject jsonObject = jsonDoc.object();
+        if (jsonObject["status"].toString() == "success")
+        {
+            // List users successful
+        }
+    }
+}
+
+void ApiCore::deleteAllUsers()
+{
+    QNetworkReply *reply = nullptr;
+    get(QUrl("/users/delete/all"), reply);
+    // Check reply
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+        QJsonObject jsonObject = jsonDoc.object();
+        if (jsonObject["status"].toString() == "success")
+        {
+            // Delete users successful
+        }
+    }
+}
+
+void ApiCore::listItems()
+{
+    QNetworkReply *reply = nullptr;
+    get(QUrl("/items/"), reply);
+    // Check reply
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+        QJsonObject jsonObject = jsonDoc.object();
+        if (jsonObject["status"].toString() == "success")
+        {
+            // List items successful
         }
     }
 }

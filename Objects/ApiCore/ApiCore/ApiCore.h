@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QDebug>
 
 namespace Photon
 {
@@ -19,10 +20,13 @@ namespace Photon
         void post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* reply);
         void get(QUrl relativeUrl, QNetworkReply* reply);
         void login(QString username, QString password);
+        void logout();
+        void addNewUser(QString user, QString password);
+        void listAllUsers();
+        void deleteAllUsers();
+        void listItems();
     private:
         QNetworkAccessManager* m_networkAccessManager;
-        QNetworkReply* m_reply;
-        QNetworkRequest* m_request;
     };
 }
 

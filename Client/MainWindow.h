@@ -44,6 +44,5 @@ namespace Photon
         QAction* aboutAction;
         QAction* connectAction;
         QAction* disconnectAction;
-
     };
 }

@@ -12,6 +12,7 @@
 #include "ContentList.h"
 #include "ContentView.h"
 #include "LoginDialog.h"
+#include "ApiCore/ApiCore.h"
 
 using namespace Photon;
 
@@ -19,24 +20,23 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     m_ui = new Ui::MainWindow();
+    m_ui->setupUi(this);
+    
     createActions();
     setupMenuBar();
+    
     ContentList* contentList = new ContentList(this);
     ContentView* contentView = new ContentView(this);
 
-    m_ui->setupUi(this);
     statusBar()->showMessage("Ready");
     tabWidget = new QTabWidget(this);
     tabWidget->setTabsClosable(true);
     tabWidget->setMovable(true);
     tabWidget->addTab(contentView, "Content View");
     // Add connect action to toolbar
-    m_ui->toolBar->addAction(saveAction);
-    m_ui->toolBar->addAction(printAction);
-    m_ui->toolBar->addAction(exportAction);
-    m_ui->toolBar->addAction(connectAction);
-    m_ui->toolBar->addAction(disconnectAction);
-    m_ui->toolBar->addAction(aboutAction);
+
+    ApiCore* api = new ApiCore(this);
+    api->login("admin", "123456");
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int index)), this, SLOT(tabClose(int index)));
 
@@ -152,6 +152,13 @@ void MainWindow::createActions()
 
     disconnectAction->setEnabled(false);
     connectAction->setEnabled(true);
+
+    m_ui->toolBar->addAction(saveAction);
+    m_ui->toolBar->addAction(printAction);
+    m_ui->toolBar->addAction(exportAction);
+    m_ui->toolBar->addAction(connectAction);
+    m_ui->toolBar->addAction(disconnectAction);
+    m_ui->toolBar->addAction(aboutAction);
 }
 
 const char *htmlText =
