@@ -1,0 +1,55 @@
+{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "Debug",
+            "displayName": "Debug Configuration",
+            "description": "Ninja build system is used for debugging.",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/Out/Build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/Out/Install/${presetName}",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_PREFIX_PATH": "/Users/dogukanarat/Qt/5.12.12/clang_64/lib/cmake/Qt5",
+                "CMAKE_OSX_ARCHITECTURES": "x86_64"
+            }
+        },
+        {
+            "name": "Release",
+            "displayName": "Release Configuration",
+            "description": "Ninja build system is used for release.",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/Out/Build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/Out/Install/${presetName}"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "Debug",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "Debug"
+        },
+        {
+            "name": "Release",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "Release"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "GoogleTest",
+            "description": "Google test framework",
+            "displayName": "GTest",
+            "configurePreset": "Debug"
+        }
+    ]
+}
