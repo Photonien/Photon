@@ -17,6 +17,7 @@ include(GoogleTest)
 add_executable(
     UnitTest
     Main.cpp
+    ApiCoreTest.cpp
 )
 
 target_compile_definitions(UnitTest PUBLIC CTEST)
@@ -24,6 +25,10 @@ target_compile_definitions(UnitTest PUBLIC CTEST)
 target_link_libraries(
     UnitTest
     gtest_main
+    Qt5::Core
+    Qt5::Widgets
+    Qt5::Gui
+    Qt5::Network
 )
 
 gtest_discover_tests(UnitTest

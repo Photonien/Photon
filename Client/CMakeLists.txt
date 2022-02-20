@@ -14,12 +14,8 @@ target_sources(
     Client 
     PRIVATE
         ApiCore.cpp
-        ApiCore.h
         LoginDialog.cpp
-        LoginDialog.h
         ContentView.cpp
-        ContentView.h
-        ContentList.h
         ContentList.cpp
         MainWindow.cpp
         Main.cpp
@@ -35,4 +31,9 @@ target_link_libraries(
         Qt5::Gui
         Qt5::Network
 )
+
+target_include_directories(
+    Client
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR})
     
