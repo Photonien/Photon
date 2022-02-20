@@ -18,12 +18,14 @@ add_executable(
     UnitTest
     Main.cpp
     ApiCoreTest.cpp
+    ApiCoreTest.h
 )
 
 target_compile_definitions(UnitTest PUBLIC CTEST)
 
 target_link_libraries(
     UnitTest
+    ApiCore
     gtest_main
     Qt5::Core
     Qt5::Widgets

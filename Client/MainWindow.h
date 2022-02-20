@@ -1,5 +1,4 @@
 #include <QMainWindow>
-
 #include <QTabWidget>
 
 namespace Ui

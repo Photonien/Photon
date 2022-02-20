@@ -14,10 +14,11 @@ namespace Photon
         Q_OBJECT
     public:
         ApiCore(QObject* parent = nullptr);
-        ~ApiCore();
+        virtual ~ApiCore();
 
         void post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* reply);
         void get(QUrl relativeUrl, QNetworkReply* reply);
+        
     private:
         QNetworkAccessManager* m_networkAccessManager;
         QNetworkReply* m_reply;
