@@ -13,6 +13,8 @@ execute_process(
 target_sources(
     Client 
     PRIVATE
+        ApiCore.cpp
+        ApiCore.h
         LoginDialog.cpp
         LoginDialog.h
         ContentView.cpp
