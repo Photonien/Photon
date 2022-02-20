@@ -25,7 +25,8 @@ router.post("/new", (req, res) => {
     const newCollectionModel = new CollectionModel({
         Author: author,
         Name: name,
-        Parent: parent
+        Parent: parent,
+        Childs: childs
     });
 
     newCollectionModel
