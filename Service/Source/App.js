@@ -6,6 +6,8 @@ const redis = require('redis');
 const crypto = require('crypto-js');
 const sessions = require('express-session');
 
+// Routes
+
 var RouteAuth = require("./Routes/RouteAuth");
 var RouteUsers = require("./Routes/RouteUsers");
 var RouteCollections = require("./Routes/RouteCollections");
