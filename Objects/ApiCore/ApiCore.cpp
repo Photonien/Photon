@@ -2,31 +2,31 @@
 
 using namespace Photon;
 
-constexpr auto API_URL = "http://localhost:6000/";
-
-ApiCore::ApiCore(QObject *parent) : QObject(parent)
+ApiCore::ApiCore(QString apiUrl, QObject *parent) : QObject(parent)
 {
     m_networkAccessManager = new QNetworkAccessManager(this);
+    m_apiUrl = apiUrl;
+    successfulLogin = false;
 }
 
 ApiCore::~ApiCore()
 {
 }
 
-void ApiCore::post(const QJsonObject &json, QUrl relativeUrl, QNetworkReply *reply)
+QNetworkReply* ApiCore::post(const QJsonObject &json, QString relativeUrl)
 {
     QNetworkRequest request;
-    QUrl baseUrl(API_URL);
-    request.setUrl(baseUrl.resolved(relativeUrl));
+    QUrl baseUrl(m_apiUrl + relativeUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    reply = m_networkAccessManager->post(request, QJsonDocument(json).toJson());
+    return m_networkAccessManager->post(request, QJsonDocument(json).toJson());
 }
 
-void ApiCore::get(QUrl relativeUrl, QNetworkReply *reply)
+void ApiCore::get(QString relativeUrl, QNetworkReply *reply)
 {
     QNetworkRequest request;
-    QUrl baseUrl(API_URL);
-    request.setUrl(baseUrl.resolved(relativeUrl));
+    QUrl baseUrl(m_apiUrl + relativeUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     reply = m_networkAccessManager->get(request);
 }
@@ -34,34 +34,52 @@ void ApiCore::get(QUrl relativeUrl, QNetworkReply *reply)
 void ApiCore::login(QString username, QString password)
 {
     QJsonObject json;
-    json["username"] = username;
-    json["password"] = password;
-    QNetworkReply *reply = nullptr;
-    post(json, QUrl("login"), reply);
-    // Check reply
-    try
+    json["Username"] = username;
+    json["Password"] = password;
+
+    QNetworkRequest request;
+    QUrl baseUrl("http://localhost:6000/auth/login");
+    request.setUrl(baseUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply* reply = 
+        m_networkAccessManager->post(request, QJsonDocument(json).toJson());
+
+    connect(reply, SIGNAL(finished()), this, SLOT(loginFinished()));
+}
+
+void ApiCore::loginFinished()
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*> (QObject::sender());
+    if (reply->error() == QNetworkReply::NoError)
     {
-        if (reply->error() == QNetworkReply::NoError)
+        QByteArray bytes = reply->readAll();
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
+        QJsonObject jsonObject = jsonDoc.object();
+        if (jsonObject["Message"].toString() == "Log on with admin")
         {
-            QByteArray bytes = reply->readAll();
-            QJsonDocument jsonDoc = QJsonDocument::fromJson(bytes);
-            QJsonObject jsonObject = jsonDoc.object();
-            if (jsonObject["status"].toString() == "success")
-            {
-                // Login successful
-            }
+            emit loginSuccessful();
+        }
+        else
+        {
+            emit loginFailed();
         }
     }
-    catch (const std::exception &e)
+    else
     {
-        qDebug() << e.what();
+        emit loginFailed();
     }
+}
+
+bool ApiCore::isLoggedIn()
+{
+    return successfulLogin;
 }
 
 void ApiCore::logout()
 {
     QNetworkReply *reply = nullptr;
-    get(QUrl("logout"), reply);
+    get("/logout", reply);
     // Check reply
     if (reply->error() == QNetworkReply::NoError)
     {
@@ -74,7 +92,7 @@ void ApiCore::logout()
         }
     }
 }
-
+/*
 void ApiCore::addNewUser(QString user, QString password)
 {
     QJsonObject json;
@@ -144,4 +162,4 @@ void ApiCore::listItems()
             // List items successful
         }
     }
-}
+}*/

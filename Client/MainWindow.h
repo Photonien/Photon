@@ -1,5 +1,6 @@
 #include <QMainWindow>
 #include <QTabWidget>
+#include <QSplitter>
 
 namespace Ui
 {
@@ -27,16 +28,20 @@ namespace Photon
         void closeApp();
         void connectToServer();
         void disconnectServer();
+        void getContent();
+        void freezeContent();
         void tabClose(int index);
 
     private:
+        void createWidgets();
         void createActions();
         void setupMenuBar();
 
         Ui::MainWindow* m_ui;
 
         QTabWidget* tabWidget;
-        
+        QSplitter* splitter;
+
         QAction* saveAction;
         QAction* printAction;
         QAction* exportAction;
