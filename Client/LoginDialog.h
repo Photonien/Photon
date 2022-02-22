@@ -14,6 +14,7 @@ namespace Photon
 
     public:
         LoginDialog(QDialog *parent = 0);
+        void setApi(ApiCore* api);
     private slots:
         void connectToServer();
         void cancel();
@@ -26,6 +27,8 @@ namespace Photon
     private:
         void checkSettings();
         bool saveSettings;
+
+        ApiCore* api;
 
         QDialog* dialog;
         QLineEdit *serverIPEdit;

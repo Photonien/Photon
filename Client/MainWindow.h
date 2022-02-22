@@ -2,6 +2,9 @@
 #include <QTabWidget>
 #include <QSplitter>
 
+#include "LoginDialog.h"
+#include "ApiCore/ApiCore.h"
+
 namespace Ui
 {
     class MainWindow;
@@ -41,6 +44,9 @@ namespace Photon
 
         QTabWidget* tabWidget;
         QSplitter* splitter;
+        
+        ApiCore* api;
+        LoginDialog* login;
 
         QAction* saveAction;
         QAction* printAction;

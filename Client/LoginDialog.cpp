@@ -62,6 +62,11 @@ LoginDialog::LoginDialog(QDialog *parent)
     checkSettings();
 }
 
+void LoginDialog::setApi(ApiCore* api)
+{
+    this->api = api;
+}
+
 void LoginDialog::checkSettings()
 {
     QSettings settings("Photon", "Photon");
@@ -82,8 +87,7 @@ void LoginDialog::connectToServer()
         settings.setValue("userName", user);
         settings.setValue("password", pass);
     }
-
-    ApiCore* api = new ApiCore(serverAddr);
+    
     api->login(user, pass);
     connect(api, SIGNAL(loginSuccessful()), this, SLOT(loginSuccess()));
     connect(api, SIGNAL(loginFailed()), this, SLOT(loginFailed()));
@@ -97,9 +101,10 @@ void LoginDialog::loginSuccess()
 
 void LoginDialog::loginFailed()
 {
+    this->close();
+    emit fail();
     QMessageBox::warning(this, "Login Failed",
         "Login failed. Please check your username and password.");
-    emit fail();
 }
 
 void LoginDialog::cancel()

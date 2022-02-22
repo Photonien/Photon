@@ -3,12 +3,11 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
-#include <QNetworkCookieJar>
 #include <QNetworkReply>
+
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <QDebug>
-#include <QString>
+#include <QJsonArray>
 
 namespace Photon
 {
@@ -16,30 +15,23 @@ namespace Photon
     {
         Q_OBJECT
     public:
-        ApiCore(QString apiUrl, QObject* parent = nullptr);
+        ApiCore(QObject* parent = nullptr);
         virtual ~ApiCore();
 
         void login(QString username, QString password);
-        bool isLoggedIn();
-
         void logout();
-        //void addNewUser(QString user, QString password);
-        //void listAllUsers();
-        //void deleteAllUsers();
-        //void listItems();
+        void listItems();        
     signals:
         void loginSuccessful();
         void loginFailed();
+        void logoutSuccessful();
+        void logoutFailed();
     private slots:
         void loginFinished();
+        void logoutFinished();
+        void listItemsFinished();
     private:
-        QNetworkReply* post(const QJsonObject& json, QString relativeUrl);
-        void get(QString relativeUrl, QNetworkReply* reply);
-        
         QNetworkAccessManager* m_networkAccessManager;
-        QString m_apiUrl;
-
-        bool successfulLogin;
     };
 }
 

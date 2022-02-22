@@ -10,8 +10,6 @@
 
 #include "ContentList.h"
 #include "ContentView.h"
-#include "LoginDialog.h"
-#include "ApiCore/ApiCore.h"
 
 using namespace Photon;
 
@@ -21,6 +19,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui = new Ui::MainWindow();
     m_ui->setupUi(this);
     
+    api = new ApiCore();
+    login = new LoginDialog();
+    login->setApi(api);
+
+    connect(login, SIGNAL(success()), this, SLOT(getContent()));
+    connect(login, SIGNAL(fail()), this, SLOT(freezeContent()));
+
     createActions();
     setupMenuBar();
     createWidgets();    
@@ -28,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar()->showMessage("Ready");
     
     this->setCentralWidget(splitter);
+    freezeContent();
     emit connectAction->trigger();
 }
 
@@ -206,29 +212,43 @@ void MainWindow::connectToServer()
 {  
     disconnectAction->setEnabled(true);
     connectAction->setEnabled(false);
-    
-    LoginDialog* login = new LoginDialog();
     login->show();
-    connect(login, SIGNAL(success()), this, SLOT(getContent()));
-    connect(login, SIGNAL(failure()), this, SLOT(freezeContent()));
 }
 
 void MainWindow::getContent()
 {
     m_ui->statusBar->showMessage("Connected to server");
+    api->listItems();
+    disconnectAction->setEnabled(true);
+    connectAction->setEnabled(false);
+
+    for(auto child:splitter->findChildren<QWidget *>())
+    {
+        child->setEnabled(true);
+    }
+    splitter->setEnabled(true);
+    
 }
 
 void MainWindow::freezeContent()
 {
     m_ui->statusBar->showMessage("Disconnected from server");
+    for(auto child:splitter->findChildren<QWidget *>())
+    {
+        child->setEnabled(false);
+    }
     splitter->setEnabled(false);
+
+    disconnectAction->setEnabled(false);
+    connectAction->setEnabled(true);
 }
 
 void MainWindow::disconnectServer()
 {
     disconnectAction->setEnabled(false);
     connectAction->setEnabled(true);
-    
+    api->logout();
+    connect(api, SIGNAL(logoutSuccessful()), this, SLOT(freezeContent()));
     QMessageBox::information(this, "Photon", "The server has been disconnected!");
 }
 
