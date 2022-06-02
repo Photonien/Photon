@@ -1,32 +1,41 @@
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+cmake_minimum_required(VERSION 3.6)
 
-add_executable(
-    Client
-)
+project(
+    Photon
+    VERSION 0.1
+    LANGUAGES CXX
+    )
 
-target_sources(
-    Client 
-    PRIVATE
-        LoginDialog.cpp
-        ContentView.cpp
-        ContentList.cpp
-        MainWindow.cpp
-        Main.cpp
-        MainWindow.ui
-)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-target_link_libraries(
-    Client
-    PUBLIC
-        ApiCore
-        Qt5::Core
-        Qt5::Widgets
-        Qt5::Gui
-        Qt5::Network
-)
+# set the C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-target_include_directories(
-    Client
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR})
-    
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+if(CMAKE_VERSION VERSION_LESS "3.7.0")
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+endif()
+
+find_package(Qt5 COMPONENTS Widgets Core Test Network REQUIRED)
+
+set(CRESSIE_SCRIPT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Scripts")
+add_definitions( ${QT_DEFINITIONS} )
+
+include(GNUInstallDirs)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+
+add_subdirectory(Libraries)
+add_subdirectory(Objects)
+add_subdirectory(Application)
+
+enable_testing()
+
+# add_subdirectory(Tests/TestClient)
