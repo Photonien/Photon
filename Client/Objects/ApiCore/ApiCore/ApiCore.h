@@ -4,9 +4,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <QDebug>
+#include <QJsonArray>
 
 namespace Photon
 {
@@ -17,14 +18,18 @@ namespace Photon
         ApiCore(QObject* parent = nullptr);
         virtual ~ApiCore();
 
-        void post(const QJsonObject& json, QUrl relativeUrl, QNetworkReply* reply);
-        void get(QUrl relativeUrl, QNetworkReply* reply);
         void login(QString username, QString password);
         void logout();
-        void addNewUser(QString user, QString password);
-        void listAllUsers();
-        void deleteAllUsers();
-        void listItems();
+        void listItems();        
+    signals:
+        void loginSuccessful();
+        void loginFailed();
+        void logoutSuccessful();
+        void logoutFailed();
+    private slots:
+        void loginFinished();
+        void logoutFinished();
+        void listItemsFinished();
     private:
         QNetworkAccessManager* m_networkAccessManager;
     };
