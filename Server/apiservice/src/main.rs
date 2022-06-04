@@ -1,42 +1,32 @@
-use mongodb::{Client, options::{ClientOptions, ResolverConfig}, bson::doc};
-use std::{error::Error};
+use std::error::Error;
+// use tide::prelude::*;
+// use tide::Request;
 use tokio;
-use chrono::{TimeZone, Utc};
 
-#[macro_use] extern crate rocket;
+pub mod connection_mongodb;
+pub mod routes;
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
+use crate::connection_mongodb::connection;
+use crate::routes::main::route_main;
+
+static LISTENER: &str = "127.0.0.1:8080";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let client_uri = "mongodb://localhost:27017";
+    unsafe {
+        let result = connection().await;
 
-    let options =
-        ClientOptions::parse_with_resolver_config(&client_uri, ResolverConfig::cloudflare())
-        .await?;
+        if result? {
+            println!("Database connection is established!");
+        } else {
+            println!("Database connection is NOT established!");
+        }
+    }
 
-    let client = Client::with_options(options)?;
+    println!("Api is listening on {}", LISTENER);
 
-    let new_doc = doc! {
-    "title": "Parasite",
-    "year": 2020,
-    "plot": "A poor family, the Kims, con their way into becoming the servants of a rich family, the Parks. But their easy life gets complicated when their deception is threatened with exposure.",
-    "released": Utc.ymd(2020, 2, 7).and_hms(0, 0, 0),
-    };
-
-    let movies = client.database("sample_mflix").collection("movies");
-
-    let insert_result = movies.insert_one(new_doc.clone(), None).await?;
-
-    println!("New document ID: {}", insert_result.inserted_id);
-
-    let _rocket = rocket::build()
-        .mount("/hello", routes![index])
-        .launch()
-        .await?;
-
+    let mut app = tide::new();
+    app.at("/").get(route_main);
+    app.listen(LISTENER).await?;
     Ok(())
 }
