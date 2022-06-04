@@ -12,10 +12,6 @@ services:
       - 6379:6379
     volumes:
       - redisvolume:/data
-  service:
-    build: Service
-    ports:
-      - 6000:6000
 
 volumes:
   mongodbvolume:

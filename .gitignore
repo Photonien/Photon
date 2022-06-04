@@ -4,3 +4,5 @@ Out
 .devcontainer
 Service/node_modules
 Service/package-lock.json
+Server/apiservice/.idea
+Server/apiservice/target

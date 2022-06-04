@@ -7,12 +7,9 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QStatusBar>
-#include <QSplitter>
 
 #include "ContentList.h"
 #include "ContentView.h"
-#include "LoginDialog.h"
-#include "ApiCore/ApiCore.h"
 
 using namespace Photon;
 
@@ -22,37 +19,46 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui = new Ui::MainWindow();
     m_ui->setupUi(this);
     
+    api = new ApiCore();
+    login = new LoginDialog();
+    login->setApi(api);
+
+    connect(login, SIGNAL(success()), this, SLOT(getContent()));
+    connect(login, SIGNAL(fail()), this, SLOT(freezeContent()));
+
     createActions();
     setupMenuBar();
+    createWidgets();    
     
+    statusBar()->showMessage("Ready");
+    
+    this->setCentralWidget(splitter);
+    freezeContent();
+    emit connectAction->trigger();
+}
+
+MainWindow::~MainWindow()
+{
+    delete m_ui;
+}
+
+void MainWindow::createWidgets()
+{
     ContentList* contentList = new ContentList(this);
     ContentView* contentView = new ContentView(this);
 
-    statusBar()->showMessage("Ready");
     tabWidget = new QTabWidget(this);
     tabWidget->setTabsClosable(true);
     tabWidget->setMovable(true);
     tabWidget->addTab(contentView, "Content View");
-    // Add connect action to toolbar
 
-    ApiCore* api = new ApiCore(this);
-    api->login("admin", "123456");
-
-    connect(tabWidget, SIGNAL(tabCloseRequested(int index)), this, SLOT(tabClose(int index)));
-
-    QSplitter* splitter = new QSplitter(this);
+    splitter = new QSplitter(this);
     splitter->setOrientation(Qt::Horizontal);
     splitter->setHandleWidth(1);
     splitter->addWidget(contentList);
     splitter->addWidget(tabWidget);
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 4);
-    this->setCentralWidget(splitter);
-}
-
-MainWindow::~MainWindow()
-{
-    delete m_ui;
 }
 
 void MainWindow::onPushButtonClicked()
@@ -100,8 +106,6 @@ void MainWindow::setupMenuBar()
     QMenu *connectionMenu = menuBar()->addMenu(tr("&Connection"));
     connectionMenu->addAction(connectAction);
     connectionMenu->addAction(disconnectAction);
-
-    menuBar()->addSeparator();
 
     QMenu *aboutMenu = menuBar()->addMenu(tr("&Help"));
     aboutMenu->addAction(aboutAction);
@@ -153,12 +157,9 @@ void MainWindow::createActions()
     disconnectAction->setEnabled(false);
     connectAction->setEnabled(true);
 
-    m_ui->toolBar->addAction(saveAction);
-    m_ui->toolBar->addAction(printAction);
-    m_ui->toolBar->addAction(exportAction);
     m_ui->toolBar->addAction(connectAction);
     m_ui->toolBar->addAction(disconnectAction);
-    m_ui->toolBar->addAction(aboutAction);
+    m_ui->toolBar->addAction(exitAction);
 }
 
 const char *htmlText =
@@ -211,16 +212,43 @@ void MainWindow::connectToServer()
 {  
     disconnectAction->setEnabled(true);
     connectAction->setEnabled(false);
-    
-    LoginDialog* login = new LoginDialog();
     login->show();
+}
+
+void MainWindow::getContent()
+{
+    m_ui->statusBar->showMessage("Connected to server");
+    api->listItems();
+    disconnectAction->setEnabled(true);
+    connectAction->setEnabled(false);
+
+    for(auto child:splitter->findChildren<QWidget *>())
+    {
+        child->setEnabled(true);
+    }
+    splitter->setEnabled(true);
+    
+}
+
+void MainWindow::freezeContent()
+{
+    m_ui->statusBar->showMessage("Disconnected from server");
+    for(auto child:splitter->findChildren<QWidget *>())
+    {
+        child->setEnabled(false);
+    }
+    splitter->setEnabled(false);
+
+    disconnectAction->setEnabled(false);
+    connectAction->setEnabled(true);
 }
 
 void MainWindow::disconnectServer()
 {
     disconnectAction->setEnabled(false);
     connectAction->setEnabled(true);
-    
+    api->logout();
+    connect(api, SIGNAL(logoutSuccessful()), this, SLOT(freezeContent()));
     QMessageBox::information(this, "Photon", "The server has been disconnected!");
 }
 
