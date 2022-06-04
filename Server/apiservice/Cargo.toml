@@ -1,0 +1,12 @@
+[package]
+name = "apiservice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mongodb = "2.1"
+bson = { version = "2", features = ["chrono-0_4"] }
+tokio = { version = "1", features = ["full"] }
+chrono = "0.4"
+tide = "0.16.0"
+serde = { version = "1.0", features = ["derive"] }
