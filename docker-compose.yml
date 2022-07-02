@@ -1,5 +1,16 @@
 version: "3.4"
 services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=devuser
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgresvolume:/var/lib/postgresql/data
   mongo:
     image: mongo
     ports:
@@ -14,5 +25,6 @@ services:
       - redisvolume:/data
 
 volumes:
+  postgresvolume:
   mongodbvolume:
   redisvolume:

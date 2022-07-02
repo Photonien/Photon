@@ -8,6 +8,9 @@ pub mod routes;
 
 use crate::connection_mongodb::connection;
 use crate::routes::main::route_main;
+use crate::routes::users::route_users_get;
+use crate::routes::users::route_users_get_by_id;
+use crate::routes::users::route_users_post;
 
 static LISTENER: &str = "127.0.0.1:8080";
 
@@ -27,6 +30,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut app = tide::new();
     app.at("/").get(route_main);
+    app.at("/users").get(route_users_get);
+    app.at("/users/:id").get(route_users_get_by_id);
+    app.at("/users").post(route_users_post);
     app.listen(LISTENER).await?;
     Ok(())
 }

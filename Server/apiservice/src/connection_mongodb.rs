@@ -6,7 +6,7 @@ use mongodb::{
 };
 use std::error::Error;
 
-static CLIENT_URI: &str = "mongodb://localhost:27015";
+static CLIENT_URI: &str = "mongodb://localhost:27017";
 static mut CLIENT: Option<Client> = None;
 
 pub async unsafe fn connection() -> Result<bool, Box<dyn Error>> {
