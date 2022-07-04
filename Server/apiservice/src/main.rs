@@ -1,17 +1,13 @@
-use std::error::Error;
-use tide::prelude::*;
-use tide::Request;
-use sqlx::Acquire;
 use sqlx::postgres::Postgres;
+use std::error::Error;
 use tide_sqlx::SQLxMiddleware;
+
+#[allow(unused_imports)]
 use tide_sqlx::SQLxRequestExt;
+#[warn(unused_imports)]
+
 
 pub mod routes;
-
-use crate::routes::main::route_main;
-use crate::routes::users::route_users_get;
-use crate::routes::users::route_users_get_by_id;
-use crate::routes::users::route_users_post;
 
 static LISTENER: &str = "127.0.0.1:8080";
 
@@ -21,13 +17,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut app = tide::new();
 
-    app.with(SQLxMiddleware::<Postgres>::new("postgres://devuser:devuser@127.0.0.1:5432/postgres").await?);
+    app.with(
+        SQLxMiddleware::<Postgres>::new("postgres://devuser:devuser@127.0.0.1:5432/postgres")
+            .await?,
+    );
 
+    app.at("/").get(routes::main::get);
 
-    app.at("/").get(route_main);
-    app.at("/users").get(route_users_get);
-    app.at("/users/:id").get(route_users_get_by_id);
-    app.at("/users").post(route_users_post);
+    app.at("/users").get(routes::users::get);
+
+    app.at("/users/:id").get(routes::users::get_by_id);
+
+    app.at("/users").post(routes::users::post);
+
+    app.at("/modules").get(routes::modules::get);
+
+    app.at("/folders").get(routes::folders::get);
+
     app.listen(LISTENER).await?;
+
     Ok(())
 }

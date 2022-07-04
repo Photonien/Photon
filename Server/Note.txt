@@ -1,0 +1,5 @@
+# print the columns
+
+    modules[0].columns().iter().for_each(|column| {
+        println!("{}, ", column.name());
+    });
